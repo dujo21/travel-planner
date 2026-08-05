@@ -1,0 +1,28 @@
+# ==== Visual Studio / .NET ====
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.cache
+*.log
+
+# ==== Service Fabric ====
+**/PackageRoot/**/log/
+
+# ==== Node / React ====
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+
+# ==== Konfiguracija okruzenja ====
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ==== OS ====
+Thumbs.db
+.DS_Store
