@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -13,7 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TravelPlanner.UserService.Data;
-using Microsoft.Extensions.DependencyInjection;
+using TravelPlanner.UserService.Mapping;
 
 namespace TravelPlanner.UserService
 {
@@ -43,6 +44,8 @@ namespace TravelPlanner.UserService
 
                         builder.Services.AddDbContext<UsersDbContext>(options =>
                             options.UseSqlServer(builder.Configuration.GetConnectionString("UsersDatabase")));
+
+                        builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
                         builder.Services.AddSingleton<StatelessServiceContext>(serviceContext);
                         builder.WebHost
