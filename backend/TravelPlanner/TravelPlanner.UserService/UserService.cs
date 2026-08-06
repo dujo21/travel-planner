@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TravelPlanner.UserService.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TravelPlanner.UserService
 {
@@ -53,6 +54,13 @@ namespace TravelPlanner.UserService
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
                         var app = builder.Build();
+
+                        using (var scope = app.Services.CreateScope())
+                        {
+                            var db = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+                            DbSeeder.Seed(db);
+                        }
+
                         if (app.Environment.IsDevelopment())
                         {
                         app.UseSwagger();

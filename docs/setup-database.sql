@@ -1,0 +1,32 @@
+-- Dodela prava pristupa nalogu pod kojim se izvrsavaju Service Fabric servisi.
+-- Pokrenuti JEDNOM, nakon sto su baze kreirane preko EF Core migracija.
+-- Bez ovoga servisi ne mogu pristupiti bazama:
+--   "Login failed for user 'NT AUTHORITY\NETWORK SERVICE'"
+
+USE master;
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = 'NT AUTHORITY\NETWORK SERVICE')
+    CREATE LOGIN [NT AUTHORITY\NETWORK SERVICE] FROM WINDOWS;
+GO
+
+USE TravelPlanner_Users;
+GO
+IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = 'NT AUTHORITY\NETWORK SERVICE')
+    CREATE USER [NT AUTHORITY\NETWORK SERVICE] FOR LOGIN [NT AUTHORITY\NETWORK SERVICE];
+ALTER ROLE db_owner ADD MEMBER [NT AUTHORITY\NETWORK SERVICE];
+GO
+
+USE TravelPlanner_Trips;
+GO
+IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = 'NT AUTHORITY\NETWORK SERVICE')
+    CREATE USER [NT AUTHORITY\NETWORK SERVICE] FOR LOGIN [NT AUTHORITY\NETWORK SERVICE];
+ALTER ROLE db_owner ADD MEMBER [NT AUTHORITY\NETWORK SERVICE];
+GO
+
+USE TravelPlanner_Expenses;
+GO
+IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = 'NT AUTHORITY\NETWORK SERVICE')
+    CREATE USER [NT AUTHORITY\NETWORK SERVICE] FOR LOGIN [NT AUTHORITY\NETWORK SERVICE];
+ALTER ROLE db_owner ADD MEMBER [NT AUTHORITY\NETWORK SERVICE];
+GO
