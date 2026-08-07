@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -52,6 +53,8 @@ namespace TravelPlanner.UserService
                         builder.Services.AddJwtAuthentication(builder.Configuration);
                         builder.Services.AddScoped<IAuthService, AuthService>();
 
+                        builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+
                         builder.Services.AddSingleton<StatelessServiceContext>(serviceContext);
                         builder.WebHost
                                     .UseKestrel()
@@ -60,7 +63,35 @@ namespace TravelPlanner.UserService
                                     .UseUrls(url);
                         builder.Services.AddControllers();
                         builder.Services.AddEndpointsApiExplorer();
-                        builder.Services.AddSwaggerGen();
+                        //builder.Services.AddSwaggerGen();
+                        builder.Services.AddSwaggerGen(options =>
+                        {
+                            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                            {
+                                Name = "Authorization",
+                                Type = SecuritySchemeType.ApiKey,
+                                Scheme = "Bearer",
+                                BearerFormat = "JWT",
+                                In = ParameterLocation.Header,
+                                Description = "Unesi token u formatu: Bearer {token}"
+                            });
+
+                            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                            {
+                                {
+                                    new OpenApiSecurityScheme
+                                    {
+                                        Reference = new OpenApiReference
+                                        {
+                                            Type = ReferenceType.SecurityScheme,
+                                            Id = "Bearer"
+                                        }
+                                    },
+                                    Array.Empty<string>()
+                                }
+                            });
+                        });
+
                         var app = builder.Build();
 
                         using (var scope = app.Services.CreateScope())
