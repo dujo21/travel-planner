@@ -24,4 +24,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TravelPlanner.Common\TravelPlanner.Common.csproj" />
+  </ItemGroup>
+
 </Project>
