@@ -12,6 +12,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TravelPlanner.Common.Authentication;
+using TravelPlanner.Common.Middleware;
 using TravelPlanner.ExpenseService.Data;
 
 namespace TravelPlanner.ExpenseService
@@ -52,15 +54,29 @@ namespace TravelPlanner.ExpenseService
                         builder.Services.AddControllers();
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
-                        var app = builder.Build();
-                        if (app.Environment.IsDevelopment())
+
+                        builder.Services.AddCors(options =>
                         {
+                            options.AddPolicy("AllowFrontend", policy =>
+                            {
+                                policy.WithOrigins(
+                                        "http://localhost:5173",
+                                        "http://localhost:51577")
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod();
+                            });
+                        });
+                        builder.Services.AddJwtAuthentication(builder.Configuration);
+                        var app = builder.Build();
+
+                        app.UseExceptionMiddleware();
+                        app.UseCors("AllowFrontend");
                         app.UseSwagger();
                         app.UseSwaggerUI();
-                        }
+                        app.UseAuthentication();
                         app.UseAuthorization();
                         app.MapControllers();
-                        
+
                         return app;
 
                     }))

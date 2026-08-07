@@ -1,3 +1,10 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.ServiceFabric.Data;
+using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
@@ -5,13 +12,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
-using Microsoft.ServiceFabric.Services.Communication.Runtime;
-using Microsoft.ServiceFabric.Services.Runtime;
-using Microsoft.ServiceFabric.Data;
-using Microsoft.EntityFrameworkCore;
+using TravelPlanner.Common.Authentication;
+using TravelPlanner.Common.Middleware;
 using TravelPlanner.TripService.Data;
 
 namespace TravelPlanner.TripService
@@ -52,15 +54,29 @@ namespace TravelPlanner.TripService
                         builder.Services.AddControllers();
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
-                        var app = builder.Build();
-                        if (app.Environment.IsDevelopment())
+
+                        builder.Services.AddCors(options =>
                         {
+                            options.AddPolicy("AllowFrontend", policy =>
+                            {
+                                policy.WithOrigins(
+                                        "http://localhost:5173",
+                                        "http://localhost:51577")
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod();
+                            });
+                        });
+                        builder.Services.AddJwtAuthentication(builder.Configuration);
+                        var app = builder.Build();
+
+                        app.UseExceptionMiddleware();
+                        app.UseCors("AllowFrontend");
                         app.UseSwagger();
                         app.UseSwaggerUI();
-                        }
+                        app.UseAuthentication();
                         app.UseAuthorization();
                         app.MapControllers();
-                        
+
                         return app;
 
                     }))

@@ -63,7 +63,6 @@ namespace TravelPlanner.UserService
                                     .UseUrls(url);
                         builder.Services.AddControllers();
                         builder.Services.AddEndpointsApiExplorer();
-                        //builder.Services.AddSwaggerGen();
                         builder.Services.AddSwaggerGen(options =>
                         {
                             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -92,6 +91,18 @@ namespace TravelPlanner.UserService
                             });
                         });
 
+                        builder.Services.AddCors(options =>
+                        {
+                            options.AddPolicy("AllowFrontend", policy =>
+                            {
+                                policy.WithOrigins(
+                                        "http://localhost:5173",
+                                        "http://localhost:51577")
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod();
+                            });
+                        });
+
                         var app = builder.Build();
 
                         using (var scope = app.Services.CreateScope())
@@ -101,6 +112,7 @@ namespace TravelPlanner.UserService
                         }
 
                         app.UseExceptionMiddleware();
+                        app.UseCors("AllowFrontend");
                         app.UseSwagger();
                         app.UseSwaggerUI();
                         app.UseAuthentication();
