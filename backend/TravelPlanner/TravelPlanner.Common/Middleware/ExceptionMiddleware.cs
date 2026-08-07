@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using TravelPlanner.Common.Exceptions;
 
 namespace TravelPlanner.Common.Middleware
 {
@@ -27,16 +28,40 @@ namespace TravelPlanner.Common.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Neocekivana greska: {Message}", ex.Message);
-
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-                var response = new ErrorResponse
+                var response = new ErrorResponse();
+
+                switch (ex)
                 {
-                    StatusCode = context.Response.StatusCode,
-                    Message = "Došlo je do greške na serveru. Pokušajte ponovo."
-                };
+                    case NotFoundException:
+                        response.StatusCode = (int)HttpStatusCode.NotFound;
+                        response.Message = ex.Message;
+                        break;
+
+                    case ConflictException:
+                        response.StatusCode = (int)HttpStatusCode.Conflict;
+                        response.Message = ex.Message;
+                        break;
+
+                    case BadRequestException:
+                        response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        response.Message = ex.Message;
+                        break;
+
+                    case UnauthorizedException:
+                        response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        response.Message = ex.Message;
+                        break;
+
+                    default:
+                        _logger.LogError(ex, "Neocekivana greska: {Message}", ex.Message);
+                        response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        response.Message = "Došlo je do greške na serveru. Pokušajte ponovo.";
+                        break;
+                }
+
+                context.Response.StatusCode = response.StatusCode;
 
                 var options = new JsonSerializerOptions
                 {

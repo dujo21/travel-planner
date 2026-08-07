@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -13,8 +12,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TravelPlanner.Common.Authentication;
+using TravelPlanner.Common.Middleware;
 using TravelPlanner.UserService.Data;
 using TravelPlanner.UserService.Mapping;
+using TravelPlanner.UserService.Services;
 
 namespace TravelPlanner.UserService
 {
@@ -47,6 +49,9 @@ namespace TravelPlanner.UserService
 
                         builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
+                        builder.Services.AddJwtAuthentication(builder.Configuration);
+                        builder.Services.AddScoped<IAuthService, AuthService>();
+
                         builder.Services.AddSingleton<StatelessServiceContext>(serviceContext);
                         builder.WebHost
                                     .UseKestrel()
@@ -64,14 +69,13 @@ namespace TravelPlanner.UserService
                             DbSeeder.Seed(db);
                         }
 
-                        if (app.Environment.IsDevelopment())
-                        {
+                        app.UseExceptionMiddleware();
                         app.UseSwagger();
                         app.UseSwaggerUI();
-                        }
+                        app.UseAuthentication();
                         app.UseAuthorization();
                         app.MapControllers();
-                        
+
                         return app;
 
                     }))
