@@ -54,6 +54,11 @@ namespace TravelPlanner.Common.Middleware
                         response.Message = ex.Message;
                         break;
 
+                    case ForbiddenException:
+                        response.StatusCode = (int)HttpStatusCode.Forbidden;
+                        response.Message = ex.Message;
+                        break;
+
                     default:
                         _logger.LogError(ex, "Neocekivana greska: {Message}", ex.Message);
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;

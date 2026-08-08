@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using TravelPlanner.Common.Authentication;
 using TravelPlanner.Common.Middleware;
 using TravelPlanner.TripService.Data;
+using TravelPlanner.TripService.Repositories;
+using TravelPlanner.TripService.Services;
 
 namespace TravelPlanner.TripService
 {
@@ -95,6 +97,8 @@ namespace TravelPlanner.TripService
                         });
                         builder.Services.AddJwtAuthentication(builder.Configuration);
                         builder.Services.AddAutoMapper(typeof(TravelPlanner.TripService.Mapping.MappingProfile).Assembly);
+                        builder.Services.AddScoped<ITripRepository, TripRepository>();
+                        builder.Services.AddScoped<ITripManagementService, TripManagementService>();
                         var app = builder.Build();
 
                         app.UseExceptionMiddleware();
