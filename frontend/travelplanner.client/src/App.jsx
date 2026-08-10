@@ -1,9 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { TripProvider } from './context/TripContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import HomePage from './pages/HomePage';
+import TripsListPage from './pages/TripsListPage';
+import TripFormPage from './pages/TripFormPage';
+import TripDetailsPage from './pages/TripDetailsPage';
 import './App.css';
 
 export default function App() {
@@ -17,7 +20,37 @@ export default function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <HomePage />
+                <TripProvider>
+                  <TripsListPage />
+                </TripProvider>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/trips/new"
+            element={
+              <ProtectedRoute>
+                <TripProvider>
+                  <TripFormPage />
+                </TripProvider>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/trips/:id"
+            element={
+              <ProtectedRoute>
+                <TripDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/trips/:id/edit"
+            element={
+              <ProtectedRoute>
+                <TripProvider>
+                  <TripFormPage />
+                </TripProvider>
               </ProtectedRoute>
             }
           />
