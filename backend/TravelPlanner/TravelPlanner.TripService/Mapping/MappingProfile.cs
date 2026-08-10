@@ -26,6 +26,13 @@ namespace TravelPlanner.TripService.Mapping
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.OwnerUserId, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
+
+            CreateMap<Destination, DestinationDto>().MaxDepth(5);
+
+            CreateMap<CreateDestinationDto, Destination>()
+                .MaxDepth(5)
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => System.Guid.NewGuid()))
+                .ForMember(dest => dest.TripId, opt => opt.Ignore());
         }
     }
 }

@@ -99,6 +99,8 @@ namespace TravelPlanner.TripService
                         builder.Services.AddAutoMapper(typeof(TravelPlanner.TripService.Mapping.MappingProfile).Assembly);
                         builder.Services.AddScoped<ITripRepository, TripRepository>();
                         builder.Services.AddScoped<ITripManagementService, TripManagementService>();
+                        builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
+                        builder.Services.AddScoped<IDestinationService, DestinationService>();
                         var app = builder.Build();
 
                         app.UseExceptionMiddleware();
