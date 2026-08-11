@@ -24,7 +24,10 @@ export default class Activity {
   // "2026-08-03" - kljuc za grupisanje po danima
   get dateKey() {
     if (!this.date) return '';
-    return this.date.toISOString().split('T')[0];
+    const y = this.date.getFullYear();
+    const m = String(this.date.getMonth() + 1).padStart(2, '0');
+    const d = String(this.date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
   get dateLabel() {

@@ -1,15 +1,11 @@
 import { useState } from 'react';
 import { ACTIVITY_STATUSES } from '../models/Activity';
+import { toInputDate } from '../utils/dateHelpers';
 
-function toInputDate(date) {
-  if (!date) return '';
-  return new Date(date).toISOString().split('T')[0];
-}
-
-export default function ActivityForm({ initial, onSubmit, onCancel }) {
+export default function ActivityForm({ initial, initialDate, onSubmit, onCancel }) {
   const [form, setForm] = useState({
     name: initial?.name ?? '',
-    date: toInputDate(initial?.date),
+    date: toInputDate(initial?.date ?? initialDate),
     time: initial?.time ? initial.time.slice(0, 5) : '',
     location: initial?.location ?? '',
     latitude: initial?.latitude ?? '',

@@ -1,9 +1,5 @@
 import { useState } from 'react';
-
-function toInputDate(date) {
-  if (!date) return '';
-  return new Date(date).toISOString().split('T')[0];
-}
+import { toInputDate } from '../utils/dateHelpers';
 
 export default function DestinationForm({ initial, onSubmit, onCancel }) {
   const [form, setForm] = useState({

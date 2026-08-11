@@ -3,12 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useTrips } from '../context/TripContext';
 import tripService from '../services/tripService';
 import LoadingSpinner from '../components/LoadingSpinner';
-
-function toInputDate(date) {
-  if (!date) return '';
-  const d = new Date(date);
-  return d.toISOString().split('T')[0];
-}
+import { toInputDate } from '../utils/dateHelpers';
 
 export default function TripFormPage() {
   const { id } = useParams();
