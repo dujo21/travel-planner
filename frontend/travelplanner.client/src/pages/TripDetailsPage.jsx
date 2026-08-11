@@ -4,6 +4,7 @@ import tripService from '../services/tripService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import DestinationsTab from '../components/DestinationsTab';
 import ActivitiesTab from '../components/ActivitiesTab';
+import ExpensesTab from '../components/ExpensesTab';
 
 export default function TripDetailsPage() {
   const { id } = useParams();
@@ -50,7 +51,9 @@ export default function TripDetailsPage() {
         <button className={activeTab === 'activities' ? 'tab active' : 'tab'} onClick={() => setActiveTab('activities')}>
           Aktivnosti
         </button>
-        <button className="tab" disabled>Troškovi</button>
+        <button className={activeTab === 'expenses' ? 'tab active' : 'tab'} onClick={() => setActiveTab('expenses')}>
+          Troškovi
+        </button>
         <button className="tab" disabled>Checklist</button>
       </div>
 
@@ -65,6 +68,7 @@ export default function TripDetailsPage() {
         )}
         {activeTab === 'destinations' && <DestinationsTab tripId={id} />}
         {activeTab === 'activities' && <ActivitiesTab tripId={id} />}
+        {activeTab === 'expenses' && <ExpensesTab tripId={id} plannedBudget={trip.plannedBudget} />}
       </div>
     </div>
   );
