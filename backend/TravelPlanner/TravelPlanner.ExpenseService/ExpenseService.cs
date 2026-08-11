@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -15,6 +16,8 @@ using System.Threading.Tasks;
 using TravelPlanner.Common.Authentication;
 using TravelPlanner.Common.Middleware;
 using TravelPlanner.ExpenseService.Data;
+using TravelPlanner.ExpenseService.Repositories;
+using TravelPlanner.ExpenseService.Services;
 
 namespace TravelPlanner.ExpenseService
 {
@@ -53,7 +56,33 @@ namespace TravelPlanner.ExpenseService
                                     .UseUrls(url);
                         builder.Services.AddControllers();
                         builder.Services.AddEndpointsApiExplorer();
-                        builder.Services.AddSwaggerGen();
+                        builder.Services.AddSwaggerGen(options =>
+                        {
+                            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                            {
+                                Name = "Authorization",
+                                Type = SecuritySchemeType.ApiKey,
+                                Scheme = "Bearer",
+                                BearerFormat = "JWT",
+                                In = ParameterLocation.Header,
+                                Description = "Unesi token u formatu: Bearer {token}"
+                            });
+
+                            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                            {
+                                {
+                                    new OpenApiSecurityScheme
+                                    {
+                                        Reference = new OpenApiReference
+                                        {
+                                            Type = ReferenceType.SecurityScheme,
+                                            Id = "Bearer"
+                                        }
+                                    },
+                                    Array.Empty<string>()
+                                }
+                            });
+                        });
 
                         builder.Services.AddCors(options =>
                         {
@@ -67,6 +96,10 @@ namespace TravelPlanner.ExpenseService
                             });
                         });
                         builder.Services.AddJwtAuthentication(builder.Configuration);
+                        builder.Services.AddAutoMapper(typeof(TravelPlanner.ExpenseService.Mapping.MappingProfile).Assembly);
+                        builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
+                        builder.Services.AddScoped<IExpenseManagementService, ExpenseManagementService>();
+
                         var app = builder.Build();
 
                         app.UseExceptionMiddleware();
