@@ -33,6 +33,17 @@ namespace TravelPlanner.TripService.Mapping
                 .MaxDepth(5)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => System.Guid.NewGuid()))
                 .ForMember(dest => dest.TripId, opt => opt.Ignore());
+
+            CreateMap<Activity, ActivityDto>()
+                .MaxDepth(5)
+                .ForMember(dest => dest.Status,
+                           opt => opt.MapFrom(src => src.Status.ToString()));
+
+            CreateMap<CreateActivityDto, Activity>()
+                .MaxDepth(5)
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => System.Guid.NewGuid()))
+                .ForMember(dest => dest.TripId, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore());
         }
     }
 }
