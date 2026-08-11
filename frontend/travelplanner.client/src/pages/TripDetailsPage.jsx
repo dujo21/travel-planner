@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import tripService from '../services/tripService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import DestinationsTab from '../components/DestinationsTab';
+import ActivitiesTab from '../components/ActivitiesTab';
 
 export default function TripDetailsPage() {
   const { id } = useParams();
@@ -46,7 +47,9 @@ export default function TripDetailsPage() {
         <button className={activeTab === 'destinations' ? 'tab active' : 'tab'} onClick={() => setActiveTab('destinations')}>
           Destinacije
         </button>
-        <button className="tab" disabled>Aktivnosti</button>
+        <button className={activeTab === 'activities' ? 'tab active' : 'tab'} onClick={() => setActiveTab('activities')}>
+          Aktivnosti
+        </button>
         <button className="tab" disabled>Troškovi</button>
         <button className="tab" disabled>Checklist</button>
       </div>
@@ -61,6 +64,7 @@ export default function TripDetailsPage() {
           </div>
         )}
         {activeTab === 'destinations' && <DestinationsTab tripId={id} />}
+        {activeTab === 'activities' && <ActivitiesTab tripId={id} />}
       </div>
     </div>
   );

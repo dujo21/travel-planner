@@ -201,3 +201,24 @@ button:disabled {
 .item-meta { font-size: 0.85rem; color: #0e7c86; margin-top: 0.25rem; }
 .item-desc { font-size: 0.9rem; color: #5a6672; margin-top: 0.5rem; }
 .item-actions { display: flex; gap: 0.5rem; }
+
+.day-group { margin-bottom: 1.5rem; }
+.day-header {
+  font-weight: 700; color: #14304f; padding: 0.5rem 0;
+  border-bottom: 2px solid #0e7c86; margin-bottom: 0.75rem;
+}
+.activity-card {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  background: #fff; border: 1px solid #e8edf2; border-radius: 10px;
+  padding: 1rem; margin-bottom: 0.6rem;
+}
+.activity-head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.activity-time { font-weight: 700; color: #0e7c86; }
+.status-badge {
+  color: #fff; font-size: 0.72rem; padding: 0.15rem 0.6rem;
+  border-radius: 999px; font-weight: 600;
+}
+.activity-loc { font-size: 0.85rem; color: #5a6672; margin-top: 0.35rem; }
+.activity-cost { font-weight: 600; color: #0e7c86; margin-top: 0.35rem; }
+.activity-actions { display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-end; }
+.status-select { padding: 0.35rem; border: 1px solid #c7d2dc; border-radius: 6px; font-size: 0.82rem; }
