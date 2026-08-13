@@ -103,6 +103,8 @@ namespace TravelPlanner.TripService
                         builder.Services.AddScoped<IDestinationService, DestinationService>();
                         builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
                         builder.Services.AddScoped<IActivityService, ActivityService>();
+                        builder.Services.AddScoped<IChecklistRepository, ChecklistRepository>();
+                        builder.Services.AddScoped<IChecklistService, ChecklistService>();
                         var app = builder.Build();
 
                         app.UseExceptionMiddleware();

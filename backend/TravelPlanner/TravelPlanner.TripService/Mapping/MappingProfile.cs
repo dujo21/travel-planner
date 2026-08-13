@@ -44,6 +44,8 @@ namespace TravelPlanner.TripService.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => System.Guid.NewGuid()))
                 .ForMember(dest => dest.TripId, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.Ignore());
+
+            CreateMap<ChecklistItem, ChecklistItemDto>().MaxDepth(5);
         }
     }
 }
