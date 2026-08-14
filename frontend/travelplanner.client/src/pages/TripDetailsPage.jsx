@@ -5,6 +5,8 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import DestinationsTab from '../components/DestinationsTab';
 import ActivitiesTab from '../components/ActivitiesTab';
 import ExpensesTab from '../components/ExpensesTab';
+import ChecklistPanel from '../components/ChecklistPanel';
+import PlanOverview from '../components/PlanOverview';
 
 export default function TripDetailsPage() {
   const { id } = useParams();
@@ -54,7 +56,12 @@ export default function TripDetailsPage() {
         <button className={activeTab === 'expenses' ? 'tab active' : 'tab'} onClick={() => setActiveTab('expenses')}>
           Troškovi
         </button>
-        <button className="tab" disabled>Checklist</button>
+        <button className={activeTab === 'checklist' ? 'tab active' : 'tab'} onClick={() => setActiveTab('checklist')}>
+          Checklist
+        </button>
+        <button className={activeTab === 'overview-full' ? 'tab active' : 'tab'} onClick={() => setActiveTab('overview-full')}>
+          Pregled plana
+        </button>
       </div>
 
       <div className="tab-content">
@@ -69,6 +76,8 @@ export default function TripDetailsPage() {
         {activeTab === 'destinations' && <DestinationsTab tripId={id} />}
         {activeTab === 'activities' && <ActivitiesTab tripId={id} />}
         {activeTab === 'expenses' && <ExpensesTab tripId={id} plannedBudget={trip.plannedBudget} />}
+        {activeTab === 'checklist' && <ChecklistPanel tripId={id} />}
+        {activeTab === 'overview-full' && <PlanOverview trip={trip} />}
       </div>
     </div>
   );
