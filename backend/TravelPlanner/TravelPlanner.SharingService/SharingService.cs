@@ -4,64 +4,141 @@ using System.Fabric;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using TravelPlanner.Contracts;
 
 namespace TravelPlanner.SharingService
 {
     /// <summary>
-    /// An instance of this class is created for each service replica by the Service Fabric runtime.
+    /// Stateful servis koji cuva share tokene u Reliable Dictionary-ju.
+    /// Poziva se preko Service Remoting-a iz TripService-a.
     /// </summary>
-    internal sealed class SharingService : StatefulService
+    internal sealed class SharingService : StatefulService, ISharingService
     {
+        private const string DictionaryName = "shareTokens";
+
         public SharingService(StatefulServiceContext context)
             : base(context)
         { }
 
         /// <summary>
-        /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
+        /// Registruje remoting listener - preko njega TripService poziva metode ovog servisa.
         /// </summary>
-        /// <remarks>
-        /// For more information on service communication, see https://aka.ms/servicefabricservicecommunication
-        /// </remarks>
-        /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new ServiceReplicaListener[0];
+            return new[]
+            {
+                new ServiceReplicaListener(context =>
+                    new Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime.FabricTransportServiceRemotingListener(context, this))
+            };
         }
 
-        /// <summary>
-        /// This is the main entry point for your service replica.
-        /// This method executes when this replica of your service becomes primary and has write status.
-        /// </summary>
-        /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service replica.</param>
-        protected override async Task RunAsync(CancellationToken cancellationToken)
+        public async Task<ShareToken> CreateShareAsync(Guid tripId, Guid ownerUserId, string accessType, int? expiryDays)
         {
-            // TODO: Replace the following sample code with your own logic 
-            //       or remove this RunAsync override if it's not needed in your service.
+            var normalizedAccess = accessType?.ToUpperInvariant() == "EDIT" ? "EDIT" : "VIEW";
 
-            var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
-
-            while (true)
+            var share = new ShareToken
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                Token = Guid.NewGuid(),
+                TripId = tripId,
+                OwnerUserId = ownerUserId,
+                AccessType = normalizedAccess,
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = expiryDays.HasValue ? DateTime.UtcNow.AddDays(expiryDays.Value) : (DateTime?)null,
+                IsRevoked = false
+            };
 
-                using (var tx = this.StateManager.CreateTransaction())
+            var dict = await this.StateManager
+                .GetOrAddAsync<IReliableDictionary<Guid, ShareToken>>(DictionaryName);
+
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                await dict.AddAsync(tx, share.Token, share);
+                await tx.CommitAsync();
+            }
+
+            return share;
+        }
+
+        public async Task<ShareToken?> ValidateTokenAsync(Guid token)
+        {
+            var dict = await this.StateManager
+                .GetOrAddAsync<IReliableDictionary<Guid, ShareToken>>(DictionaryName);
+
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                var result = await dict.TryGetValueAsync(tx, token);
+
+                if (!result.HasValue)
                 {
-                    var result = await myDictionary.TryGetValueAsync(tx, "Counter");
-
-                    ServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
-                        result.HasValue ? result.Value.ToString() : "Value does not exist.");
-
-                    await myDictionary.AddOrUpdateAsync(tx, "Counter", 0, (key, value) => ++value);
-
-                    // If an exception is thrown before calling CommitAsync, the transaction aborts, all changes are 
-                    // discarded, and nothing is saved to the secondary replicas.
-                    await tx.CommitAsync();
+                    return null;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                var share = result.Value;
+
+                // Nevalidan ako je opozvan ili istekao.
+                if (share.IsRevoked)
+                {
+                    return null;
+                }
+                if (share.ExpiresAt.HasValue && share.ExpiresAt.Value < DateTime.UtcNow)
+                {
+                    return null;
+                }
+
+                return share;
+            }
+        }
+
+        public async Task<List<ShareToken>> GetSharesForTripAsync(Guid tripId)
+        {
+            var dict = await this.StateManager
+                .GetOrAddAsync<IReliableDictionary<Guid, ShareToken>>(DictionaryName);
+
+            var results = new List<ShareToken>();
+
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                var enumerable = await dict.CreateEnumerableAsync(tx);
+                var enumerator = enumerable.GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(CancellationToken.None))
+                {
+                    var share = enumerator.Current.Value;
+                    if (share.TripId == tripId)
+                    {
+                        results.Add(share);
+                    }
+                }
+            }
+
+            return results.OrderByDescending(s => s.CreatedAt).ToList();
+        }
+
+        public async Task<bool> RevokeShareAsync(Guid token)
+        {
+            var dict = await this.StateManager
+                .GetOrAddAsync<IReliableDictionary<Guid, ShareToken>>(DictionaryName);
+
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                var result = await dict.TryGetValueAsync(tx, token);
+                if (!result.HasValue)
+                {
+                    await tx.CommitAsync();
+                    return false;
+                }
+
+                var share = result.Value;
+                share.IsRevoked = true;
+
+                await dict.SetAsync(tx, token, share);
+                await tx.CommitAsync();
+                return true;
             }
         }
     }
