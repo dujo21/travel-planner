@@ -299,3 +299,5 @@ button:disabled {
 .shared-header h1 { color: #14304f; }
 .shared-footer { margin-top: 1.5rem; color: #5a6672; font-size: 0.9rem; text-align: center; }
 
+.detail-header-row { display: flex; justify-content: space-between; align-items: center; }
+
