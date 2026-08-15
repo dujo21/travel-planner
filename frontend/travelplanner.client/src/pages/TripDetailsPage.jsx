@@ -7,6 +7,7 @@ import ActivitiesTab from '../components/ActivitiesTab';
 import ExpensesTab from '../components/ExpensesTab';
 import ChecklistPanel from '../components/ChecklistPanel';
 import PlanOverview from '../components/PlanOverview';
+import ShareDialog from '../components/ShareDialog';
 
 export default function TripDetailsPage() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function TripDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -39,6 +41,7 @@ export default function TripDetailsPage() {
         <h1>{trip.name}</h1>
         <div className="header-actions">
           <button className="btn-secondary" onClick={() => navigate('/')}>← Nazad</button>
+          <button className="btn-secondary" onClick={() => setShareOpen(true)}>Podeli</button>
           <button onClick={() => navigate(`/trips/${id}/edit`)}>Izmeni</button>
         </div>
       </header>
@@ -79,6 +82,7 @@ export default function TripDetailsPage() {
         {activeTab === 'checklist' && <ChecklistPanel tripId={id} />}
         {activeTab === 'overview-full' && <PlanOverview trip={trip} />}
       </div>
+      <ShareDialog tripId={id} open={shareOpen} onClose={() => setShareOpen(false)} />
     </div>
   );
 }

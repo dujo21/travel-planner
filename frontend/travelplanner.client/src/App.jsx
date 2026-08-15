@@ -8,6 +8,7 @@ import TripsListPage from './pages/TripsListPage';
 import TripFormPage from './pages/TripFormPage';
 import TripDetailsPage from './pages/TripDetailsPage';
 import './App.css';
+import SharedTripPage from './pages/SharedTripPage';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/shared/:token" element={<SharedTripPage />} />
           <Route
             path="/"
             element={
