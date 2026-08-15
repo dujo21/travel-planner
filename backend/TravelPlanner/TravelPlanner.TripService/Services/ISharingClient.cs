@@ -1,12 +1,11 @@
-﻿using Microsoft.ServiceFabric.Services.Remoting;
-using Microsoft.ServiceFabric.Services.Remoting.FabricTransport;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TravelPlanner.Contracts;
 
-namespace TravelPlanner.Contracts
+namespace TravelPlanner.TripService.Services
 {
-    public interface ISharingService : IService
+    public interface ISharingClient
     {
         Task<ShareToken> CreateShareAsync(Guid tripId, Guid ownerUserId, string accessType, int? expiryDays);
         Task<ShareToken?> ValidateTokenAsync(Guid token);

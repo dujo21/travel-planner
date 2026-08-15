@@ -18,11 +18,13 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.29" />
     <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="8.4.205-rc" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="8.4.205-rc" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TravelPlanner.Common\TravelPlanner.Common.csproj" />
+    <ProjectReference Include="..\TravelPlanner.Contracts\TravelPlanner.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

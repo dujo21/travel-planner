@@ -13,8 +13,10 @@
           "Microsoft.EntityFrameworkCore.Design": "8.0.29",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.29",
           "Microsoft.ServiceFabric.AspNetCore.Kestrel": "8.4.205-rc",
+          "Microsoft.ServiceFabric.Services.Remoting": "8.4.205-rc",
           "Swashbuckle.AspNetCore": "6.6.2",
           "TravelPlanner.Common": "1.0.0",
+          "TravelPlanner.Contracts": "1.0.0",
           "runtimepack.Microsoft.NETCore.App.Runtime.win-x64": "8.0.29",
           "runtimepack.Microsoft.AspNetCore.App.Runtime.win-x64": "8.0.29"
         },
@@ -1739,6 +1741,21 @@
           }
         }
       },
+      "Microsoft.ServiceFabric.FabricTransport.Internal/8.4.205-rc": {
+        "dependencies": {
+          "Microsoft.ServiceFabric": "11.4.205-rc"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.ServiceFabric.FabricTransport.V2.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.4.205.1"
+          },
+          "lib/netstandard2.0/Microsoft.ServiceFabric.FabricTransport.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.4.205.1"
+          }
+        }
+      },
       "Microsoft.ServiceFabric.Services/8.4.205-rc": {
         "dependencies": {
           "Microsoft.ServiceFabric.Data": "8.4.205-rc",
@@ -1746,6 +1763,19 @@
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.ServiceFabric.Services.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "8.1.0.0"
+          }
+        }
+      },
+      "Microsoft.ServiceFabric.Services.Remoting/8.4.205-rc": {
+        "dependencies": {
+          "Microsoft.ServiceFabric.Diagnostics.Internal": "8.4.205-rc",
+          "Microsoft.ServiceFabric.FabricTransport.Internal": "8.4.205-rc",
+          "Microsoft.ServiceFabric.Services": "8.4.205-rc"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.ServiceFabric.Services.Remoting.dll": {
             "assemblyVersion": "6.0.0.0",
             "fileVersion": "8.1.0.0"
           }
@@ -1982,6 +2012,17 @@
         },
         "runtime": {
           "TravelPlanner.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "TravelPlanner.Contracts/1.0.0": {
+        "dependencies": {
+          "Microsoft.ServiceFabric.Services.Remoting": "8.4.205-rc"
+        },
+        "runtime": {
+          "TravelPlanner.Contracts.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -2327,12 +2368,26 @@
       "path": "microsoft.servicefabric.diagnostics.internal/8.4.205-rc",
       "hashPath": "microsoft.servicefabric.diagnostics.internal.8.4.205-rc.nupkg.sha512"
     },
+    "Microsoft.ServiceFabric.FabricTransport.Internal/8.4.205-rc": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7I1SWsKNMtOMvo6ip+bimuxTpanlmIgRwpJhqw7zwgwAvfxHQyV2cl0jXXT0gpWTYuV0EJklyzt7b62bXdkJxA==",
+      "path": "microsoft.servicefabric.fabrictransport.internal/8.4.205-rc",
+      "hashPath": "microsoft.servicefabric.fabrictransport.internal.8.4.205-rc.nupkg.sha512"
+    },
     "Microsoft.ServiceFabric.Services/8.4.205-rc": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-WQGuw5fIlbz5gKNkY8JrcommqIlidLZj9W6mGNzTuehARRXxYCFHcaZsiTT9BA9akUvJvEHM9EbUfqSkWrs/VQ==",
       "path": "microsoft.servicefabric.services/8.4.205-rc",
       "hashPath": "microsoft.servicefabric.services.8.4.205-rc.nupkg.sha512"
+    },
+    "Microsoft.ServiceFabric.Services.Remoting/8.4.205-rc": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Lk3lwQif41VWTYhrmxlYkl4PWMtJSWrl2Qxl6GkcHBWovOC/h1DWF/nGDKmA60CB+QshfEmRDddgvNSM5ppxOw==",
+      "path": "microsoft.servicefabric.services.remoting/8.4.205-rc",
+      "hashPath": "microsoft.servicefabric.services.remoting.8.4.205-rc.nupkg.sha512"
     },
     "Microsoft.SqlServer.Server/1.0.0": {
       "type": "package",
@@ -2608,6 +2663,11 @@
       "hashPath": "system.windows.extensions.6.0.0.nupkg.sha512"
     },
     "TravelPlanner.Common/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "TravelPlanner.Contracts/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
