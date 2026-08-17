@@ -12,5 +12,6 @@ namespace TravelPlanner.ExpenseService.Services
         Task<ExpenseDto> CreateAsync(CreateExpenseDto dto, Guid userId);
         Task<ExpenseDto> UpdateAsync(Guid id, UpdateExpenseDto dto);
         Task DeleteAsync(Guid id);
+        Task DeleteAllForTripAsync(Guid tripId);
     }
 }

@@ -53,7 +53,8 @@ namespace TravelPlanner.TripService.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _tripService.DeleteTripAsync(id, GetUserId(), IsAdmin());
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            await _tripService.DeleteTripAsync(id, GetUserId(), IsAdmin(), token);
             return NoContent();
         }
 

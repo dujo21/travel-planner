@@ -58,6 +58,13 @@ namespace TravelPlanner.ExpenseService.Controllers
             return NoContent();
         }
 
+        [HttpDelete("~/api/trips/{tripId:guid}/expenses/all")]
+        public async Task<IActionResult> DeleteAllForTrip(Guid tripId)
+        {
+            await _service.DeleteAllForTripAsync(tripId);
+            return NoContent();
+        }
+
         private Guid GetUserId()
         {
             var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

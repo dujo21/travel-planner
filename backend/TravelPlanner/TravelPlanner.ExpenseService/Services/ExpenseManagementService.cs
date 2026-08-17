@@ -82,6 +82,15 @@ namespace TravelPlanner.ExpenseService.Services
             await _repository.DeleteAsync(expense);
         }
 
+        public async Task DeleteAllForTripAsync(Guid tripId)
+        {
+            var expenses = await _repository.GetByTripAsync(tripId);
+            foreach (var expense in expenses)
+            {
+                await _repository.DeleteAsync(expense);
+            }
+        }
+
         private static ExpenseCategory ParseCategory(string category)
         {
             if (!Enum.TryParse<ExpenseCategory>(category, out var parsed))

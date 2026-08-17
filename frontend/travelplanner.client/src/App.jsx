@@ -9,6 +9,7 @@ import TripFormPage from './pages/TripFormPage';
 import TripDetailsPage from './pages/TripDetailsPage';
 import './App.css';
 import SharedTripPage from './pages/SharedTripPage';
+import AdminPage from './pages/AdminPage';
 
 export default function App() {
   return (
@@ -53,6 +54,14 @@ export default function App() {
                 <TripProvider>
                   <TripFormPage />
                 </TripProvider>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminPage />
               </ProtectedRoute>
             }
           />

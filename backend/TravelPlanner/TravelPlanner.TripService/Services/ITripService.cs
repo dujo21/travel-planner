@@ -11,6 +11,6 @@ namespace TravelPlanner.TripService.Services
         Task<TripDto> GetTripByIdAsync(Guid id, Guid userId, bool isAdmin);
         Task<TripDto> CreateTripAsync(CreateTripDto dto, Guid userId);
         Task<TripDto> UpdateTripAsync(Guid id, UpdateTripDto dto, Guid userId, bool isAdmin);
-        Task DeleteTripAsync(Guid id, Guid userId, bool isAdmin);
+        Task DeleteTripAsync(Guid id, Guid userId, bool isAdmin, string authToken);
     }
 }

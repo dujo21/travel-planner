@@ -8,7 +8,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 
 export default function TripsListPage() {
   const { trips, loading, error, loadTrips, deleteTrip } = useTrips();
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const [confirmId, setConfirmId] = useState(null);
@@ -36,6 +36,9 @@ export default function TripsListPage() {
         </div>
         <div className="header-actions">
           <button onClick={() => navigate('/trips/new')}>+ Novo putovanje</button>
+          {isAdmin && (
+            <button className="btn-secondary" onClick={() => navigate('/admin')}>Administracija</button>
+          )}
           <button className="btn-secondary" onClick={logout}>Odjava</button>
         </div>
       </header>

@@ -95,6 +95,12 @@ namespace TravelPlanner.TripService
                                       .AllowAnyMethod();
                             });
                         });
+
+                        builder.Services.AddHttpClient<IExpenseClient, ExpenseClient>(client =>
+                        {
+                            client.BaseAddress = new Uri("http://localhost:8865");
+                        });
+
                         builder.Services.AddJwtAuthentication(builder.Configuration);
                         builder.Services.AddAutoMapper(typeof(TravelPlanner.TripService.Mapping.MappingProfile).Assembly);
                         builder.Services.AddScoped<ITripRepository, TripRepository>();

@@ -6,6 +6,7 @@ using TravelPlanner.Common.Exceptions;
 using TravelPlanner.TripService.Dtos;
 using TravelPlanner.TripService.Entities;
 using TravelPlanner.TripService.Repositories;
+using TravelPlanner.TripService.Services;
 
 namespace TravelPlanner.TripService.Services
 {
@@ -13,11 +14,19 @@ namespace TravelPlanner.TripService.Services
     {
         private readonly ITripRepository _repository;
         private readonly IMapper _mapper;
+        private readonly IExpenseClient _expenseClient;
+        private readonly ISharingClient _sharingClient;
 
-        public TripManagementService(ITripRepository repository, IMapper mapper)
+        public TripManagementService(
+            ITripRepository repository,
+            IMapper mapper,
+            IExpenseClient expenseClient,
+            ISharingClient sharingClient)
         {
             _repository = repository;
             _mapper = mapper;
+            _expenseClient = expenseClient;
+            _sharingClient = sharingClient;
         }
 
         public async Task<IEnumerable<TripDto>> GetTripsAsync(Guid userId, bool isAdmin)
@@ -76,16 +85,27 @@ namespace TravelPlanner.TripService.Services
             return _mapper.Map<TripDto>(trip);
         }
 
-        public async Task DeleteTripAsync(Guid id, Guid userId, bool isAdmin)
+        public async Task DeleteTripAsync(Guid id, Guid userId, bool isAdmin, string authToken)
         {
             var trip = await _repository.GetByIdAsync(id);
-
             if (trip == null)
             {
                 throw new NotFoundException("Plan putovanja nije pronađen.");
             }
 
             EnsureOwnership(trip, userId, isAdmin);
+
+            // 1. Obrisi troskove u ExpenseService-u (druga baza, HTTP poziv).
+            await _expenseClient.DeleteAllForTripAsync(id, authToken);
+
+            // 2. Opozovi sve share tokene ovog plana (stateful servis, remoting).
+            var shares = await _sharingClient.GetSharesForTripAsync(id);
+            foreach (var share in shares)
+            {
+                await _sharingClient.RevokeShareAsync(share.Token);
+            }
+
+            // 3. Obrisi plan - EF kaskadno brise destinacije, aktivnosti, checklist.
             await _repository.DeleteAsync(trip);
         }
 
