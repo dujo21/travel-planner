@@ -83,7 +83,7 @@ export default function PlanOverview({ trip }) {
           </div>
           {trip.notes && (
             <div className="overview-notes">
-              <strong>Bilješke:</strong> {trip.notes}
+              <strong>Beleške:</strong> {trip.notes}
             </div>
           )}
         </section>

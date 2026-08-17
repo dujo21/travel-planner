@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,15 +14,18 @@ namespace TravelPlanner.TripService.Services
     {
         private readonly IActivityRepository _activityRepo;
         private readonly ITripRepository _tripRepo;
+        private readonly IDestinationRepository _destinationRepo;
         private readonly IMapper _mapper;
 
         public ActivityService(
             IActivityRepository activityRepo,
             ITripRepository tripRepo,
+            IDestinationRepository destinationRepo,
             IMapper mapper)
         {
             _activityRepo = activityRepo;
             _tripRepo = tripRepo;
+            _destinationRepo = destinationRepo;
             _mapper = mapper;
         }
 
@@ -36,6 +40,7 @@ namespace TravelPlanner.TripService.Services
         {
             var trip = await EnsureTripAccess(tripId, userId, isAdmin);
             ValidateDateWithinTrip(dto.Date, trip);
+            await EnsureWithinDestination(tripId, dto.Date);
 
             var activity = _mapper.Map<Activity>(dto);
             activity.TripId = tripId;
@@ -56,6 +61,7 @@ namespace TravelPlanner.TripService.Services
             }
 
             ValidateDateWithinTrip(dto.Date, trip);
+            await EnsureWithinDestination(tripId, dto.Date);
 
             activity.Name = dto.Name.Trim();
             activity.DestinationId = dto.DestinationId;
@@ -119,6 +125,25 @@ namespace TravelPlanner.TripService.Services
             if (date < trip.StartDate || date > trip.EndDate)
             {
                 throw new BadRequestException("Datum aktivnosti mora biti unutar trajanja putovanja.");
+            }
+        }
+
+        private async Task EnsureWithinDestination(Guid tripId, DateTime date)
+        {
+            var destinations = await _destinationRepo.GetByTripAsync(tripId);
+
+            if (!destinations.Any())
+            {
+                return;
+            }
+
+            bool withinAny = destinations.Any(d =>
+                date >= d.ArrivalDate && date <= d.DepartureDate);
+
+            if (!withinAny)
+            {
+                throw new BadRequestException(
+                    "Datum aktivnosti mora biti unutar perioda neke destinacije ovog putovanja.");
             }
         }
 

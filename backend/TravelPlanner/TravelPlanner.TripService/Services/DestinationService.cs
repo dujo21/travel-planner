@@ -36,6 +36,7 @@ namespace TravelPlanner.TripService.Services
         {
             var trip = await EnsureTripAccess(tripId, userId, isAdmin);
             ValidateDatesWithinTrip(dto.ArrivalDate, dto.DepartureDate, trip);
+            await EnsureNoOverlap(tripId, dto.ArrivalDate, dto.DepartureDate, null);
 
             var destination = _mapper.Map<Destination>(dto);
             destination.TripId = tripId;
@@ -55,6 +56,7 @@ namespace TravelPlanner.TripService.Services
             }
 
             ValidateDatesWithinTrip(dto.ArrivalDate, dto.DepartureDate, trip);
+            await EnsureNoOverlap(tripId, dto.ArrivalDate, dto.DepartureDate, id);
 
             destination.Name = dto.Name.Trim();
             destination.Location = dto.Location?.Trim();
@@ -103,6 +105,26 @@ namespace TravelPlanner.TripService.Services
             if (arrival < trip.StartDate || departure > trip.EndDate)
             {
                 throw new BadRequestException("Datumi destinacije moraju biti unutar trajanja putovanja.");
+            }
+        }
+
+        private async Task EnsureNoOverlap(Guid tripId, DateTime arrival, DateTime departure, Guid? excludeId)
+        {
+            var existing = await _destinationRepo.GetByTripAsync(tripId);
+
+            foreach (var d in existing)
+            {
+                if (excludeId.HasValue && d.Id == excludeId.Value)
+                {
+                    continue;
+                }
+
+                bool overlaps = arrival <= d.DepartureDate && d.ArrivalDate <= departure;
+                if (overlaps)
+                {
+                    throw new BadRequestException(
+                        $"Datumi se preklapaju sa destinacijom '{d.Name}' ({d.ArrivalDate:dd.MM.yyyy} - {d.DepartureDate:dd.MM.yyyy}).");
+                }
             }
         }
     }

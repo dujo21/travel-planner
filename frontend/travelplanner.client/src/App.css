@@ -310,3 +310,175 @@ button:disabled {
 .role-badge { background: #e2e8f0; color: #1a2b3c; font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 999px; font-weight: 600; }
 .role-badge.admin { background: #0e7c86; color: #fff; }
 
+/* ===== DIZAJN NADOGRADNJA ===== */
+
+:root {
+  --primary: #0e7c86;
+  --primary-dark: #0b636b;
+  --accent: #f4785c;
+  --ink: #14304f;
+  --muted: #64748b;
+  --bg: #eef2f7;
+}
+
+body {
+  background: linear-gradient(160deg, #eef2f7 0%, #e6eef2 100%);
+  color: var(--ink);
+}
+
+/* Zaglavlja stranica sa gradijentom */
+.page-header h1,
+.auth-form h2,
+.shared-header h1 {
+  background: linear-gradient(135deg, #14304f 0%, #0e7c86 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.3;
+  padding: 0.1em 0;
+}
+
+/* Dugmad — gradijent i mekši hover */
+button {
+  background: linear-gradient(135deg, #0e7c86 0%, #0b636b 100%);
+  border-radius: 10px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 2px 8px rgba(14, 124, 134, 0.25);
+}
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(14, 124, 134, 0.35);
+  background: linear-gradient(135deg, #0b636b 0%, #094f56 100%);
+}
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid #d3dde7;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #b8c6d4;
+}
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.25);
+}
+.btn-danger:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  box-shadow: 0 4px 14px rgba(185, 28, 28, 0.35);
+}
+
+/* Kartice putovanja — zaobljenije, dublja senka, gradijent na vrhu */
+.trip-card {
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 4px 20px rgba(20, 48, 79, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+.trip-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0e7c86 0%, #f4785c 100%);
+}
+.trip-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(20, 48, 79, 0.15);
+}
+.trip-budget { color: var(--accent); font-weight: 700; }
+
+/* Auth forme i veće kartice */
+.auth-form,
+.form-card {
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(20, 48, 79, 0.12);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+/* Inputi — mekši fokus */
+.form-group input,
+.form-group textarea,
+.form-group select,
+.checklist-add input {
+  border-radius: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(14, 124, 134, 0.12);
+}
+
+/* Tabovi — aktivan sa gradijentom ispod */
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: transparent;
+  position: relative;
+}
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, #0e7c86 0%, #f4785c 100%);
+}
+
+/* Tab sadržaj i sekcije — dublja senka */
+.tab-content,
+.budget-summary,
+.item-card,
+.activity-card,
+.checklist-item,
+.admin-table {
+  border-radius: 14px;
+  box-shadow: 0 3px 16px rgba(20, 48, 79, 0.07);
+}
+
+/* Bedževi — malo izraženiji */
+.status-badge,
+.category-badge,
+.share-access-badge,
+.role-badge {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  letter-spacing: 0.02em;
+}
+
+/* Budžet traka — gradijent */
+.budget-fill {
+  background: linear-gradient(90deg, #0e7c86 0%, #14a89b 100%);
+}
+.budget-fill.over {
+  background: linear-gradient(90deg, #ef4444 0%, #b91c1c 100%);
+}
+
+/* Modali — mekši ulaz */
+.modal {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Spinner u akcentnoj boji */
+.spinner { border-top-color: var(--accent); }
+
+/* Admin tabela — gradijent zaglavlje */
+.admin-table th {
+  background: linear-gradient(135deg, #14304f 0%, #0e7c86 100%);
+}
+
+/* Deljena stranica — akcentna linija */
+.shared-header { border-bottom: 3px solid transparent; border-image: linear-gradient(90deg, #0e7c86, #f4785c) 1; }
+
