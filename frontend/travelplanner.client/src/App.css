@@ -482,3 +482,15 @@ button:active:not(:disabled) {
 /* Deljena stranica — akcentna linija */
 .shared-header { border-bottom: 3px solid transparent; border-image: linear-gradient(90deg, #0e7c86, #f4785c) 1; }
 
+/* Geocoding i mapa */
+.geo-search { display: flex; gap: 0.5rem; }
+.geo-search input { flex: 1; }
+.geo-results { margin-top: 0.5rem; border: 1px solid #d3dde7; border-radius: 8px; overflow: hidden; }
+.geo-result-item { padding: 0.6rem 0.75rem; cursor: pointer; font-size: 0.85rem; border-bottom: 1px solid #eef2f6; transition: background 0.1s; }
+.geo-result-item:last-child { border-bottom: none; }
+.geo-result-item:hover { background: #f0f9fa; }
+
+.activity-map { display: flex; flex-direction: column; gap: 0.75rem; }
+.map-legend { text-align: center; font-size: 0.85rem; }
+.map-empty { text-align: center; padding: 3rem; background: #fff; border-radius: 14px; box-shadow: 0 3px 16px rgba(20,48,79,0.07); }
+.leaflet-container { font-family: inherit; }

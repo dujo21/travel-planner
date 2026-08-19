@@ -8,6 +8,7 @@ import ExpensesTab from '../components/ExpensesTab';
 import ChecklistPanel from '../components/ChecklistPanel';
 import PlanOverview from '../components/PlanOverview';
 import ShareDialog from '../components/ShareDialog';
+import MapTab from '../components/MapTab';
 
 export default function TripDetailsPage() {
   const { id } = useParams();
@@ -65,6 +66,9 @@ export default function TripDetailsPage() {
         <button className={activeTab === 'overview-full' ? 'tab active' : 'tab'} onClick={() => setActiveTab('overview-full')}>
           Pregled plana
         </button>
+        <button className={activeTab === 'map' ? 'tab active' : 'tab'} onClick={() => setActiveTab('map')}>
+          Mapa
+        </button>
       </div>
 
       <div className="tab-content">
@@ -81,6 +85,7 @@ export default function TripDetailsPage() {
         {activeTab === 'expenses' && <ExpensesTab tripId={id} plannedBudget={trip.plannedBudget} />}
         {activeTab === 'checklist' && <ChecklistPanel tripId={id} />}
         {activeTab === 'overview-full' && <PlanOverview trip={trip} />}
+        {activeTab === 'map' && <MapTab tripId={id} />}
       </div>
       <ShareDialog tripId={id} open={shareOpen} onClose={() => setShareOpen(false)} />
     </div>

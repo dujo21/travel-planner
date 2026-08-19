@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ACTIVITY_STATUSES } from '../models/Activity';
 import { toInputDate } from '../utils/dateHelpers';
+import geocodingService from '../services/geocodingService';
 
 export default function ActivityForm({ initial, initialDate, onSubmit, onCancel }) {
   const [form, setForm] = useState({
@@ -17,6 +18,9 @@ export default function ActivityForm({ initial, initialDate, onSubmit, onCancel 
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [geoResults, setGeoResults] = useState([]);
+  const [geoSearching, setGeoSearching] = useState(false);
+  const [geoError, setGeoError] = useState('');
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -32,6 +36,35 @@ export default function ActivityForm({ initial, initialDate, onSubmit, onCancel 
     }
     setErrors(e);
     return Object.keys(e).length === 0;
+  }
+
+  async function searchLocation() {
+    if (!form.location || form.location.trim().length < 3) {
+      setGeoError('Unesi bar 3 karaktera lokacije.');
+      return;
+    }
+    setGeoSearching(true);
+    setGeoError('');
+    try {
+      const results = await geocodingService.search(form.location);
+      if (results.length === 0) {
+        setGeoError('Lokacija nije pronađena.');
+      }
+      setGeoResults(results);
+    } catch {
+      setGeoError('Greška pri pretrazi lokacije.');
+    } finally {
+      setGeoSearching(false);
+    }
+  }
+
+  function pickLocation(result) {
+    setForm((prev) => ({
+      ...prev,
+      latitude: result.latitude,
+      longitude: result.longitude,
+    }));
+    setGeoResults([]);
   }
 
   async function handleSubmit(e) {
@@ -85,17 +118,32 @@ export default function ActivityForm({ initial, initialDate, onSubmit, onCancel 
 
       <div className="form-group">
         <label>Lokacija</label>
-        <input name="location" value={form.location} onChange={handleChange} />
+        <div className="geo-search">
+          <input name="location" value={form.location} onChange={handleChange} placeholder="npr. Koloseum, Rim" />
+          <button type="button" className="btn-small" onClick={searchLocation} disabled={geoSearching}>
+            {geoSearching ? 'Tražim...' : '📍 Pronađi'}
+          </button>
+        </div>
+        {geoError && <span className="field-error">{geoError}</span>}
+        {geoResults.length > 0 && (
+          <div className="geo-results">
+            {geoResults.map((r, i) => (
+              <div key={i} className="geo-result-item" onClick={() => pickLocation(r)}>
+                {r.displayName}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="form-row">
         <div className="form-group">
           <label>Latitude</label>
-          <input type="number" name="latitude" value={form.latitude} onChange={handleChange} step="any" placeholder="npr. 41.8902" />
+          <input type="number" name="latitude" value={form.latitude} onChange={handleChange} step="any" placeholder="automatski" />
         </div>
         <div className="form-group">
           <label>Longitude</label>
-          <input type="number" name="longitude" value={form.longitude} onChange={handleChange} step="any" placeholder="npr. 12.4922" />
+          <input type="number" name="longitude" value={form.longitude} onChange={handleChange} step="any" placeholder="automatski" />
         </div>
       </div>
 
